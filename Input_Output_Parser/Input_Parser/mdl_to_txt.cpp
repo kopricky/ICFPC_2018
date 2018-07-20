@@ -14,18 +14,13 @@ struct coordinate
     coordinate(int x_, int y_, int z_) : x(x_), y(y_), z(z_){}
 };
 
-int read_input()
+int mdl_to_txt()
 {
     char input_file_name[] = "./sample_input.mdl";
     char output_file_name[] = "./sample_output.txt";
 
     ifstream fin(input_file_name, ios::in | ios::binary );
     ofstream fout(output_file_name, ios::out);
-
-    if(!fin || !fout){
-        cout << "ファイルが開けません" << "\n";
-        return 1;
-    }
 
     if(!fin || !fout){
         cout << "ファイルが開けません" << "\n";
@@ -74,6 +69,6 @@ int read_input()
 
 int main()
 {
-    assert(!read_input());
+    assert(!mdl_to_txt());
     return 0;
 }
