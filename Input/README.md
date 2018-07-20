@@ -13,6 +13,6 @@ x_1 y_1 z_1
   
 x_n y_n z_n  
   
-(x_i,y_i,z_i) は昇順  
+(x_i,y_i,z_i) は Full な voxel の座標で昇順にならんでいる  
   
 の形式です  
