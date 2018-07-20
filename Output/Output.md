@@ -1,6 +1,7 @@
 # 出力の変換についての説明
-output_converter.cpp で txt 形式から ndl 形式に変換する
-その際 txt ファイルは以下の形式で出力する
+output_converter.cpp で txt 形式から ndl 形式に変換する  
+output_converter.cpp のファイル入力およびファイル出力は仮の名前なので適宜変更してください  
+その際 txt ファイルは以下の形式で出力する  
 
 (コマンド1)  
 
