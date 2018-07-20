@@ -3,13 +3,8 @@
 #include <cassert>
 #include <vector>
 #define ll long long
-#define show(x) cout<<#x<<" = "<<(x)<<endl
 
 using namespace std;
-
-const int MAX_SIZE = 2000000;
-
-bool bit[MAX_SIZE];
 
 struct coordinate
 {
@@ -18,7 +13,7 @@ struct coordinate
     coordinate(int x_, int y_, int z_) : x(x_), y(y_), z(z_){}
 };
 
-int read_input()
+int mdl_to_txt()
 {
     char input_file_name[] = "./sample_input.mdl";
     char output_file_name[] = "./sample_output.txt";
@@ -31,30 +26,31 @@ int read_input()
         return 1;
     }
 
-    char* buff = new char[MAX_SIZE];
+    char buff;
 
-    fin.read(buff, sizeof(buff));
+    fin.read(&buff, sizeof(char));
 
     int R = 0;
 
-    int index = 0;
-
-    vector<coordinate> block;
-
-    fin.read((char*)bit,sizeof(bool)*MAX_SIZE);
-
-    for(;index < 8; index++){
-        R += (1 << bit[7-index]);
+    for(int i = 0; i < 8; i++){
+        if((buff >> i)&1) R += (1 << i);
     }
 
     fout << R << "\n";
 
     int cube = R * R * R;
 
-    for(;index < cube; index++){
-        if(bit[index]){
-            int val = index - 8;
-            block.emplace_back(val / R / R, (val / R) % R, val % R);
+    int index = 0;
+
+    vector<coordinate> block;
+
+    while(!fin.eof()) {
+        char buff;
+        fin.read(&buff,sizeof(char));
+        for(int i = 0; i < 8 && index < cube; i++, index++){
+            if((buff >> i)&1){
+                block.emplace_back(index / R / R, (index / R) % R, index % R);
+            }
         }
     }
 
@@ -72,6 +68,6 @@ int read_input()
 
 int main()
 {
-    assert(!read_input());
+    assert(!mdl_to_txt());
     return 0;
 }

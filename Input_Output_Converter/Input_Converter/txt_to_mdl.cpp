@@ -2,9 +2,7 @@
 #include <fstream>
 #include <cassert>
 #include <vector>
-#include <algorithm>
 #define ll long long
-#define show(x) cout<<#x<<" = "<<(x)<<endl
 
 using namespace std;
 
