@@ -65,12 +65,12 @@ int txt_to_ndl()
         return 1;
     }
 
-    while(1){
-        string s;
-        fin >> s;
+    string s;
+    while(fin >> s){
         if(s == "Halt"){
             int num = (1 << 8) - 1;
             fout.write((char*) &num, sizeof(char));
+            return 0;
         }else if(s == "Wait"){
             int num = (1 << 7) - 1;
             fout.write((char*) &num, sizeof(char));
@@ -157,7 +157,7 @@ int txt_to_ndl()
             return 1;
         }
     }
-    return 0;
+    return 1;
 }
 
 int main()
