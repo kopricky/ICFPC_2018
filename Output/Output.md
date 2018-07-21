@@ -26,7 +26,7 @@ output_converter.cpp のファイル入力およびファイル出力は仮の�
 
 (*dx*,*dy*,*dz*)(∈{-1,0,1}^3) 方向に *m* 個の seed を渡す 分裂: "Fission *dx* *dy* *dz* *m*"  
 
-voxel に物質を生成し (*dx*,*dy*,*dz*)(∈{-1,0,1}^3) 方向に移動 物質生成: "Fission *dx* *dy* *dz*"  
+(*dx*,*dy*,*dz*)(∈{-1,0,1}^3) 方向の voxel に物質を生成 物質生成: "Fission *dx* *dy* *dz*"  
 
 (*dx*,*dy*,*dz*)(∈{-1,0,1}^3) 方向にいる S と融合する Pが行う融合: "FusionP *dx* *dy* *dz*"  
 
