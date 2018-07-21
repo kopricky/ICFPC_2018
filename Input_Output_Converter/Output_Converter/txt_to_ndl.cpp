@@ -54,8 +54,8 @@ vector<int> near_move(int dx, int dy, int dz)
 
 int txt_to_ndl()
 {
-    char input_file_name[] = "./sample_input.txt";
-    char output_file_name[] = "./sample_output.ndl";
+    char input_file_name[] = "./input.txt";
+    char output_file_name[] = "./output.ndl";
 
     ifstream fin(input_file_name, ios::in);
     ofstream fout(output_file_name, ios::out | ios::binary);
@@ -80,77 +80,77 @@ int txt_to_ndl()
         }else if(s == "SMove"){
             string dir;
             int dist;
-            cin >> dir >> dist;
+            fin >> dir >> dist;
             int num1 = (1 << 5), num2 = 0;
             auto p = long_move(dir, dist);
             for(int i = 0; i < (int)(p.first).size(); i++){
-                num1 += (1 << (p.first[i]+2));
+                num1 += (p.first[i] << (i+2));
             }
             for(int i = 0; i < (int)(p.second).size(); i++){
-                num2 += (1 << (p.second[i]+3));
+                num2 += (p.second[i] << (i+3));
             }
             fout.write((char*) &num1, sizeof(char));
             fout.write((char*) &num2, sizeof(char));
         }else if(s == "LMove"){
             string dir1, dir2;
             int dist1, dist2;
-            cin >> dir1 >> dist1 >> dir2 >> dist2;
+            fin >> dir1 >> dist1 >> dir2 >> dist2;
             auto p1 = short_move(dir1, dist1);
             auto p2 = short_move(dir2, dist2);
             int num1 = (1 << 4) + (1 << 5), num2 = 0;
             for(int i = 0; i < (int)(p2.first).size(); i++){
-                num1 += (1 << p2.first[i]);
+                num1 += (p2.first[i] << i);
             }
             for(int i = 0; i < (int)(p1.first).size(); i++){
-                num1 += (1 << (p1.first[i]+2));
+                num1 += (p1.first[i] << (i+2));
             }
             for(int i = 0; i < (int)(p2.second).size(); i++){
-                num2 += (1 << p2.first[i]);
+                num2 += (p2.second[i] << i);
             }
             for(int i = 0; i < (int)(p1.second).size(); i++){
-                num2 += (1 << (p1.second[i]+4));
+                num2 += (p1.second[i] << (i+4));
             }
             fout.write((char*) &num1, sizeof(char));
             fout.write((char*) &num2, sizeof(char));
         }else if(s == "Fission"){
             int dx, dy, dz, m;
-            cin >> dx >> dy >> dz >> m;
+            fin >> dx >> dy >> dz >> m;
             int num1 = (1 << 5) + (1 << 7), num2 = 0;
             auto p1 = near_move(dx, dy, dz);
             for(int i = 0; i < (int)p1.size(); i++){
-                num1 += (1 << p1[i]);
+                num1 += (p1[i] << i);
             }
             auto p2 = convert_to_zero_one(m, 8);
             for(int i = 0; i < (int)p2.size(); i++){
-                num2 += (1 << p2[i]);
+                num2 += (p2[i] << i);
             }
             fout.write((char*) &num1, sizeof(char));
             fout.write((char*) &num2, sizeof(char));
         }else if(s == "Fill"){
             int dx, dy, dz;
-            cin >> dx >> dy >> dz;
+            fin >> dx >> dy >> dz;
             int num = (1 << 6) + (1 << 7);
             auto p = near_move(dx, dy, dz);
             for(int i = 0; i < (int)p.size(); i++){
-                num += (1 << p[i]);
+                num += (p[i] << i);
             }
             fout.write((char*) &num, sizeof(char));
         }else if(s == "FusionP"){
             int dx, dy, dz;
-            cin >> dx >> dy >> dz;
+            fin >> dx >> dy >> dz;
             int num = (1 << 5) + (1 << 6) + (1 << 7);
             auto p = near_move(dx, dy, dz);
             for(int i = 0; i < (int)p.size(); i++){
-                num += (1 << p[i]);
+                num += (p[i] << i);
             }
             fout.write((char*) &num, sizeof(char));
         }else if(s == "FusionS"){
             int dx, dy, dz;
-            cin >> dx >> dy >> dz;
+            fin >> dx >> dy >> dz;
             int num = (1 << 5) + (1 << 6);
             auto p = near_move(dx, dy, dz);
             for(int i = 0; i < (int)p.size(); i++){
-                num += (1 << p[i]);
+                num += (p[i] << i);
             }
             fout.write((char*) &num, sizeof(char));
         }else{

@@ -25,7 +25,7 @@ int mdl_to_txt()
         char buff;
         fin.read(&buff,sizeof(char));
         for(int i = 0; i < 8; i++){
-            fout << (buff >> i);
+            fout << ((buff >> i)&1);
         }
     }
 
