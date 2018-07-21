@@ -52,10 +52,10 @@ vector<int> near_move(int dx, int dy, int dz)
     return convert_to_zero_one((dx+1)*9+(dy+1)*3+(dz+1), 5);
 }
 
-int txt_to_ndl()
+int txt_to_nbt()
 {
     char input_file_name[] = "./input.txt";
-    char output_file_name[] = "./output.ndl";
+    char output_file_name[] = "./output.nbt";
 
     ifstream fin(input_file_name, ios::in);
     ofstream fout(output_file_name, ios::out | ios::binary);
@@ -162,6 +162,6 @@ int txt_to_ndl()
 
 int main()
 {
-    assert(!txt_to_ndl());
+    assert(!txt_to_nbt());
     return 0;
 }
