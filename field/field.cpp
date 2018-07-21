@@ -24,6 +24,7 @@ typedef vector<VI> VVI;
 struct bot{
     int x;
     int y;
+    int z;
     set<int> seed;
 };
 
@@ -31,13 +32,14 @@ class field{
     int R,pointsize,sx,sy,sz,xlen,ylen,zlen;
     int bot_size = 20;
     ll cost=0;
-    int f[450][450][450]={};
-
+    bool f[450][450][450]={};
+    bool created[450][450][450]={};
     vector<string> trace;
     queue<string>bot_trace[20];
     vector<tuple<int,int,int> > points;
     vector<int> xpoint,ypoint,zpoint;
-    
+    bot robot[20];
+    set<int> active_robot;
     public:
     void input(){
         scanf("%d",&R);
@@ -180,6 +182,21 @@ class field{
     }
     void fiss(int dx,int dy,int dz,int m,int bot_num){
         bot_trace[bot_num].push(fiss_str(dx,dy,dz,m));
+        int cnt =0;
+        set<int> st;
+        for(auto x:robot[bot_num].seed){
+            if(cnt==0){
+                active_robot.insert(x);
+                st.insert(x);
+            }else{
+                st.insert(x);
+            }
+            cnt++;
+            if(cnt==m)break;
+        }
+        for(auto x:st){
+            robot[bot_num].seed.erase(x);
+        }
     }
     string fill_str(int dx,int dy,int dz){
         string a,b,c,d;
@@ -202,7 +219,7 @@ class field{
         e = to_string(-dy);
         f = to_string(-dz);
         bot_trace[p].push("FusionP "+a+" "+b+" "+c);
-        bot_trace[s].push("FusionP "+d+" "+e+" "+f);
+        bot_trace[s].push("FusionS "+d+" "+e+" "+f);
     }
 
     void firststep(){
@@ -212,6 +229,13 @@ class field{
             bot_trace[0].pop();
             trace.push_back(tmp);
         }
+        robot[0].x = sx;
+        robot[0].y = sy;
+        robot[0].z = sz;
+        rep(i,19){
+            robot[0].seed.insert(i+1);
+        }
+        active_robot.insert(0);
         return;
     }
 
