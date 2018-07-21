@@ -21,11 +21,18 @@ typedef vector<VI> VVI;
 #define inf  1000000007
 #define rep(i,n) for(int i=0;i<(int)(n);++i)
 
+struct bot{
+    int x;
+    int y;
+    set<int> seed;
+};
+
 class field{
     int R,pointsize,sx,sy,sz,xlen,ylen,zlen;
     int bot_size = 20;
     ll cost=0;
     int f[450][450][450]={};
+
     vector<string> trace;
     queue<string>bot_trace[20];
     vector<tuple<int,int,int> > points;
@@ -185,6 +192,19 @@ class field{
     void fill(int dx,int dy,int dz,int bot_num){
         bot_trace[bot_num].push(fill_str(dx,dy,dz));
     }
+    
+    void fusion(int p,int s,int dx,int dy,int dz){
+        string a,b,c,d,e,f;
+        a = to_string(dx);
+        b = to_string(dy);
+        c = to_string(dz);
+        d = to_string(-dx);
+        e = to_string(-dy);
+        f = to_string(-dz);
+        bot_trace[p].push("FusionP "+a+" "+b+" "+c);
+        bot_trace[s].push("FusionP "+d+" "+e+" "+f);
+    }
+
     void firststep(){
         move(sx,sy,sz,0);
         while(!bot_trace[0].empty()){
@@ -194,6 +214,9 @@ class field{
         }
         return;
     }
+
+
+
     void show(){
         for(string s:trace){
             cout << s << endl;
