@@ -49,12 +49,20 @@ $0 \lt R \le 250$
 
 18近傍
 
+#### 遠方変位(*Far Coordinate difference*)
+- $d$が遠方変位($fd$) $\overset{\mathrm{def}}{\Leftrightarrow}$ $mlen(d) \le 2 ~\land~ clen(d) = 1$  
+
 #### 領域(Region)
 
 座標$c, c'$の張る直方体領域を$[c1,c2]$と書く  
 $c = (x,y,z), c' = (x',y',z')$とすると
 
 - $[c1,c2] = [\min\{x,x'\},\max\{x,x'\}]\times [\min\{y,y'\},\max\{y,y'\}]\times [\min\{z,z'\},\max\{z,z'\}]$
+
+#### 領域の次元(Dimension of a region)
+$r =[(x1,y1,z1),(x2,y2,z2)]$とした時、
+-$dim(r) =  (x1 = x2 ? 0 : 1) + (y1 = y2 ? 0 : 1) + (z1 = z2 ? 0 : 1)$
+つまり$r$が立体なら3で平面なら2みたいな感じ
 
 ## Matrix
 
@@ -198,10 +206,17 @@ Matrixは$[0,R-1]\times[0,R-1]\times[0,R-1]$の各voxelの状態を表す3次元
     - 効果は$c'$を`Full`にする
     - コスト:$c'$がもともと`Full`なら$6$, そうでないなら$12$
 
+- Void $nd$ (voxelの物体を取り除く)
+    $c' = c+nd$とする
+    - $c'$がフィールド外なら`Error`
+    - 「使用領域」は$\{c,c'\}$
+    - 効果は$c'$を`Void`にする
+    - コスト:$c'$が`Full`なら$-12$, そうでないなら$3$
 ### グループコマンド
 
 - FusionP $nd_p$ と FusionS $nd_s$ (融合コマンド。FusionPをしたボットとFusionSをボットで融合)  
     - $bot_p.pos + nd_p, bot_s.pos + nd_s$がフィールド外なら`Error`
+    さらに、
     - 「使用領域」は$\{bot_p.pos,bot_s.pos\}$
     - $bot_p.pos + nd_p = bot_s.pos ~\land~ bot_s.pos+nd_s = bot_p.pos$の場合のみ以下の効果がある
     ```text
@@ -209,3 +224,14 @@ Matrixは$[0,R-1]\times[0,R-1]\times[0,R-1]$の各voxelの状態を表す3次元
        bot_p.seeds = union(bot_p.seeds, {bot_s.bid}, bot_s.seeds)
     ```
     - コスト: -24
+- GFill
+$r$を埋めたい領域とし、$n=dim(r)$とする。
+    - $n$個のbotがいて$bot_i$はGFill $nd_i ,fd_i$を$r = [bot_i.pos+nd_i,bot_i.pos+nd_i+fd_i]$となるように実行。
+    -効果としてはこの領域内の各voxelに対してFillをする(つまり領域r内が全部埋まる)。
+    - bot_i.pos+ndi,bot_i.pos+ndi+fdiがフィールド外なら`Error`
+    - さらに、bot_i.pos+ndi = bot_j.pos+ndjとなる時や、bot_i.posが$r$内にある時も`Error`
+    - Void voxelに対してはコスト$12$で、Full Voxelだとコスト$6$。
+    - 使用領域は各$bot_i.pos$と$r$
+    -例えば直方体を埋めたい時は8個のbotが直方体の角(異なる角とは限らない?)にいてそれぞれGFillをして一気に埋める感じ
+- GVoid
+ GFillの逆でコストはFull voxelに対しては$-12$でVoid voxelは$3$
