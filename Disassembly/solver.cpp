@@ -90,6 +90,10 @@ public:
     Coordinate(){};
     Coordinate(int x_, int y_, int z_) : x(x_), y(y_), z(z_){};
 
+    Coordinate operator+ (const Coordinate& another) const {
+        return Coordinate(this->x+another.x, this->y+another.y, this->z+another.z);
+    }
+
     bool operator== (const Coordinate& another) const {
         return (x == another.x) && (y == another.y) && (z == another.z);
     }
@@ -109,8 +113,7 @@ public:
     string command[12] = {"Halt", "Wait", "Flip", "SMove", "LMove", "Fission", "Fill", "Void", "FusionP", "FusionS", "GFill", "GVoid"};
     vector<vector<int> > hist_command;
     int identifier, parent, clock_time;
-    Coordinate cur_pos;
-    Coordinate target;
+    Coordinate cur_pos, target;
     set<int> child;
     bool upper;
 
@@ -141,7 +144,7 @@ public:
         hist_command.emplace_back(clock_time, 2);
     }
 
-    void smove() {
+    void smove(Coordinate& dir) {
 
     }
 
@@ -153,19 +156,19 @@ public:
 
     }
 
-    void fill() {
+    void fill(Coordinate& dir) {
 
     }
 
-    void void_() {
+    void void_(Coordinate& dir) {
 
     }
 
-    void fusionp() {
+    void fusionp(Coordinate& dir) {
 
     }
 
-    void fusions() {
+    void fusions(Coordinate& dir) {
 
     }
 
@@ -189,7 +192,7 @@ public:
 
 private:
     int resol, cube, voxel_count, bot_count, clock_time;
-    bool*** field;
+    bool* field;
     ll energy_sum;
     int leftx, lefty, leftz, rightx, righty, rightz, rangex, rangey, rangez;
     int boringx[MAX_BORING_SIZE], boringz[MAX_BORING_SIZE];
@@ -233,9 +236,20 @@ private:
     }
 
     void lower_action() {
-        for(auto& bot : botset){
-            if(bot.is_lower()){
-
+        for(auto& bot : botset) {
+            if(bot.is_lower()) {
+                if(bot.reached()) {
+                    bot.halt();
+                }else{
+                    Coordinate next_pos = bot.cur_pos + Coordinate(0, 0, -1);
+                    int next_pos_int = ctoi(next_pos, resol);
+                    if(field[next_pos_int]){
+                        bot.void_(Coordinate(0, 0, -1));
+                        field[next_pos_int] = false;
+                    }else{
+                        bot.
+                    }
+                }
             }
         }
     }
@@ -291,15 +305,7 @@ public:
     void build(int R_) {
         resol = R_;
         cube = resol * resol * resol;
-        field = new bool**[resol+1];
-        rep(i, resol){
-            field[i] = new bool*[resol+1];
-        }
-        rep(i,resol+1){
-            rep(j,resol+1){
-                field[i][j] = new bool[resol+1];
-            }
-        }
+        field = new bool[cube];
         rep(i, MAX_SEED){
             if(i == 0){
                 set<int> init_child;
