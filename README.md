@@ -1,2 +1,2 @@
 # ICFPC_2018
-team Yarubue_Yarubue
+Team Yarubue_Yarubue
