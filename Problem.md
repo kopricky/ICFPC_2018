@@ -47,7 +47,7 @@ $0 \lt R \le 250$
 
 - $d$が近傍変位($nd$) $\overset{\mathrm{def}}{\Leftrightarrow}$ $mlen(d) \le 2 ~\land~ clen(d) = 1$  
 
-まぁ8近傍よ
+18近傍
 
 #### 領域(Region)
 
