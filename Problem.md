@@ -226,10 +226,11 @@ Matrixは$[0,R-1]\times[0,R-1]\times[0,R-1]$の各voxelの状態を表す3次元
     - コスト: -24
 - GFill
 $r$を領域とし、$n=dim(r)$とする。
-     - $n$個のbotがいて$bot_i$はGFill $nd_i fd_i$を$r = [bot_i.pos+nd_i,bot_i.pos+nd_i+fd_i]$となるように実行。
+     - $n$個のbotがいて$bot_i$はGFill $nd_i ,fd_i$を$r = [bot_i.pos+nd_i,bot_i.pos+nd_i+fd_i]$となるように実行。
 効果としてはこの領域内の各voxelに対してFillをすることができる。
     - bot_i.pos+ndi,bot_i.pos+ndi+fdiがフィールド外なら`Error`
     - さらに、bot_i.pos+ndi = bot_j.pos+ndjとなる時や、bot_i.posが$r$内にある時も`Error`
     - Void voxelに対してはコスト$12$で、Full Voxelだとコスト$6$。
+    - 使用領域は各$bot_i.pos$と$r$
 - GVoid
  GFillの逆でコストはFull voxelに対しては$-12$でVoid voxelは$3$
