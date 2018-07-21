@@ -31,6 +31,7 @@ class field{
     vector<tuple<int,int,int> > points;
     vector<int> xpoint,ypoint,zpoint;
     
+    public:
     void input(){
         scanf("%d",&R);
         scanf("%d",&pointsize);
@@ -184,16 +185,30 @@ class field{
     void fill(int dx,int dy,int dz,int bot_num){
         bot_trace[bot_num].push(fill_str(dx,dy,dz));
     }
-
+    void firststep(){
+        move(sx,sy,sz,0);
+        while(!bot_trace[0].empty()){
+            string tmp = bot_trace[0].front();
+            bot_trace[0].pop();
+            trace.push_back(tmp);
+        }
+        return;
+    }
+    void show(){
+        for(string s:trace){
+            cout << s << endl;
+        }
+    }
 };
 
 
 
 
 int main(){
-
-
-
+    field fd;
+    fd.input();
+    fd.firststep();
+    fd.show();
 
 
     return 0;
