@@ -184,10 +184,12 @@ class field{
         bot_trace[bot_num].push(fiss_str(dx,dy,dz,m));
         int cnt =0;
         set<int> st;
+        int new_robot;
         for(auto x:robot[bot_num].seed){
             if(cnt==0){
                 active_robot.insert(x);
                 st.insert(x);
+                new_robot = x;
             }else{
                 st.insert(x);
             }
@@ -196,7 +198,14 @@ class field{
         }
         for(auto x:st){
             robot[bot_num].seed.erase(x);
+            if(x!=new_robot){
+                robot[new_robot].seed.insert(x);
+            }
         }
+        robot[new_robot].x = robot[bot_num].x+sx;
+        robot[new_robot].y = robot[bot_num].y+sy;
+        robot[new_robot].z = robot[bot_num].z+sz;
+        
     }
     string fill_str(int dx,int dy,int dz){
         string a,b,c,d;
