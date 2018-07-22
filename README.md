@@ -1,2 +1,2 @@
 # ICFPC_2018
-よく分かってないですが各自作業ディレクトリを作ってやる感じ？
+Team Yarubue_Yarubue
