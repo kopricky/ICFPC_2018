@@ -10,12 +10,13 @@ using namespace std;
 
 class Bot {
 public:
+
     string command[12] = {"Halt", "Wait", "Flip", "SMove", "LMove", "Fission", "Fill", "Void", "FusionP", "FusionS", "GFill", "GVoid"};
     vector<vector<int> > hist_command;
     int identifier, parent, clock_time;
-    Coordinate cur_pos, target;
+    Coordinate cur_pos, relative_pos, goal_pos;
     set<int> child;
-    bool upper;
+    bool upper, corner;
 
     Bot(){}
 
@@ -28,8 +29,12 @@ public:
         return upper;
     }
 
+    inline bool is_corner() {
+        return corner;
+    }
+
     inline bool reached() {
-        return (cur_pos == target);
+        return (cur_pos == goal_pos);
     }
 
     void halt() {
@@ -72,11 +77,11 @@ public:
 
     }
 
-    void gfill() {
+    void gfill(Coordinate dir, Coordinate dist) {
 
     }
 
-    void gvoid() {
+    void gvoid(Coordinate dir, Coordinate dist) {
 
     }
 };

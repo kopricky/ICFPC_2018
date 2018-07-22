@@ -3,6 +3,7 @@
 
 class Coordinate {
 public:
+
     int x, y, z;
     Coordinate(){};
     Coordinate(int x_, int y_, int z_) : x(x_), y(y_), z(z_){};
@@ -15,6 +16,10 @@ public:
         return Coordinate(this->x-another.x, this->y-another.y, this->z-another.z);
     }
 
+    Coordinate operator* (const Coordinate& another) const {
+        return Coordinate(this->x*another.x, this->y*another.y, this->z*another.z);
+    }
+
     Coordinate operator+() const {
         return Coordinate(+this->x, +this->y, +this->z);
     }
@@ -23,12 +28,12 @@ public:
         return Coordinate(-this->x, -this->y, -this->z);
     }
 
-    Coordinate& operator+= (const Coordinate& another){
+    Coordinate& operator+= (const Coordinate& another) {
         this->x += another.x, this->y += another.y, this->z += another.z;
         return *this;
     }
 
-    Coordinate& operator-= (const Coordinate& another){
+    Coordinate& operator-= (const Coordinate& another) {
         this->x -= another.x, this->y -= another.y, this->z -= another.z;
         return *this;
     }

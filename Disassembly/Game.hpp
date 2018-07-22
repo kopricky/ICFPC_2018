@@ -5,13 +5,24 @@
 #include "Coordinate.hpp"
 #include "Bot.hpp"
 #define rep(i,n) for(int i=0;i<(int)(n);++i)
+#define INF 1000000007
 
 class Game {
 public:
-    static const int MAX_BORING_SIZE = 10;
-    const int BLOCK_SIZE = 28;
-    const int MAX_SEED = 40;
-    const int MAX_SMOVE = 15;
+    // 座標の最大値
+    static const int MAX_RESOL = 250;
+    // 遠方座標の最大値
+    static const int MAX_FAR_DIST = 30;
+    // ブロックの大きさ
+    static const int BLOCK_SIZE = MAX_FAR_DIST - 2;
+    // x および z 方向上に掘る穴の最大数
+    static const int MAX_BORING_SIZE = ceil(MAX_RESOL / BLOCK_SIZE) + 1;
+    // 最大のbot数
+    static const int MAX_SEED = 40;
+    // SMove での最大移動距離
+    static const int MAX_SMOVE = 15;
+    // LMove での最大移動距離
+    static const int MAX_LMOVE = 5;
     const Coordinate INIT_POS = Coordinate(0, 0, 0);
     const Coordinate dx = Coordinate(1, 0, 0);
     const Coordinate dy = Coordinate(0, 1, 0);
@@ -19,10 +30,18 @@ public:
     vector<Bot> botset;
 
 private:
+
+    // resolution の値, resolution^3, voxelの数, botの数, 時間(ステップ数)
     int resol, cube, voxel_count, bot_count, clock_time;
+    // 現在 voxel があるかないか
     bool* field;
+    // エネルギーの合計
     long long energy_sum;
+    // 直方体の範囲を表す変数
     int leftx, lefty, leftz, rightx, righty, rightz, rangex, rangey, rangez;
+    // 現在考えようとしている直方体の x, y, z 方向の長さ
+    int cur_lenx, cur_leny, cur_lenz;
+    // 掘る位置の x 座標と y 座標
     int boringx[MAX_BORING_SIZE], boringz[MAX_BORING_SIZE];
 
     void pre_calc() {
@@ -53,59 +72,106 @@ private:
 
     }
 
-    bool part_end_check() {
-
-    }
-
-    bool boring() {
-        alloc_target();
-        bool lower_end = false, upper_end = true;
-        while(!lower_end || !upper_end) {
-            set<Coordinate> bot_filled;
-            lower_end |= lower_action(bot_filled);
-            upper_end |= upper_action(bot_filled);
+    bool erase_check() {
+        for(auto& bot : botset){
+            if(!bot.reached()) return false;
         }
-        return part_end_check();
+        return true;
     }
 
-    bool erase() {
-
+    void boring() {
+        alloc_target();
+        while(true) {
+            set<Coordinate> bot_filled;
+            lower_action(bot_filled);
+            upper_action(bot_filled);
+            if(erase_check()) return;
+        }
     }
 
-    bool lower_action(set<Coordinate>& ) {
-        bool lower_end = true;
+    bool erase_cubioid() {
+        bool end_judge = false;
+        for(auto& bot : botset) {
+            if(bot.is_lower() && bot.is_corner()) {
+                bot.gvoid(dy, Coordinate(cur_lenx-1, cur_leny-1, cur_lenz-1)*(-bot.relative_pos));
+                if(bot.cur_pos.y == 0) {
+                    end_judge = true;
+                }
+            }else if(!bot.is_lower() && bot.is_corner()){
+                bot.gvoid(-dy, Coordinate(cur_lenx-1, -(cur_leny-1), cur_lenz-1)*(-bot.relative_pos));
+            }else{
+                bot.halt();
+            }
+        }
+        return end_judge;
+    }
+
+    void erase_rectangle() {
+        for(auto& bot : botset) {
+            if(bot.is_lower()) {
+                if(bot.relative_pos.z < 0){
+                    bot.gvoid(dz, Coordinate(cur_lenx-1, 0, cur_lenz-3)*(-bot.relative_pos));
+                }else{
+                    bot.gvoid(-dz, Coordinate(cur_lenx-1, 0, -(cur_lenz-3))*(-bot.relative_pos));
+                }
+            }
+        }
+    }
+
+    void erase_line() {
+        for(auto& bot : botset) {
+            if(bot.is_lower()) {
+                if(bot.relative_pos.z < 0){
+                    bot.gvoid(dz, Coordinate(cur_lenx-1, 0, cur_lenz-3)*(-bot.relative_pos));
+                }else{
+                    bot.gvoid(-dz, Coordinate(cur_lenx-1, 0, -(cur_lenz-3))*(-bot.relative_pos));
+                }
+            }
+        }
+    }
+
+    void lower_action(set<Coordinate>& bot_filled) {
         for(auto& bot : botset) {
             if(bot.is_lower()) {
                 if(bot.reached()) {
                     bot.halt();
                 }else{
-                    lower_end = false;
-                    Coordinate next_pos = bot.cur_pos - dz;
+                    Coordinate next_pos = bot.cur_pos - dy;
                     int next_pos_int = Coordinate::ctoi(next_pos, resol);
                     if(field[next_pos_int]){
-                        bot.void_(-dz);
+                        bot.void_(-dy);
                         field[next_pos_int] = false;
                     }else{
                         for(int adv = 1; adv <= MAX_SMOVE; adv++){
-                            if(field[Coordinate::ctoi(next_pos - dz, resol)]) break;
-                            next_pos -= dz;
+                            if(next_pos == bot.goal_pos || field[Coordinate::ctoi(next_pos - dy, resol)]) break;
+                            next_pos -= dy;
                         }
                         bot.smove(next_pos - bot.cur_pos);
                         bot.cur_pos = next_pos;
                     }
                 }
+                bot_filled.insert(bot.cur_pos);
             }
         }
-        return lower_end;
     }
 
-    bool upper_action() {
+    void upper_action(set<Coordinate>& bot_filled) {
         for(auto& bot : botset){
             if(!bot.is_lower()){
                 if(bot.reached()) {
                     bot.halt();
                 }else{
-
+                    Coordinate next_pos = bot.cur_pos - dy;
+                    if(bot_filled.count(next_pos)){
+                        bot.halt();
+                    }else{
+                        for(int adv = 1; adv <= MAX_SMOVE; adv++){
+                            if(next_pos == bot.goal_pos || bot_filled.count(next_pos - dy)) break;
+                            next_pos -= dy;
+                        }
+                        bot.smove(next_pos - bot.cur_pos);
+                        bot.cur_pos = next_pos;
+                    }
                 }
             }
         }
@@ -132,7 +198,7 @@ private:
 
     }
 
-    void return_() {
+    void come_back() {
 
     }
 
@@ -177,15 +243,15 @@ public:
 
     void play() {
         pre_conditioning();
-        while(true){
+        while(true) {
             do {
-                while(boring()){};
-            } while(erase());
+                boring();
+            } while(erase_cubioid());
             if(all_end_check()) break;
             move();
             swap_upper_lower();
         }
-        return_();
+        come_back();
     }
 
     void determine() {
